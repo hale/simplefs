@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "filesys.h"
 
 extern char **environ;                   // environment array
@@ -21,6 +22,14 @@ int main(int argc, char **argv) {
 
 
   format();
+
+  diskblock_t block;
+  strcpy( block.data, "CS3008 Operating Systems Assessment 2012" );
+  writeblock(&block, 0);
+
+  printBlock(0);
+
+  writedisk( "virtualdisk9_11" );
 
   exit(0);
 

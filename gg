@@ -1,0 +1,2 @@
+#/bin/sh
+clang shell.c filesys.c && ./a.out

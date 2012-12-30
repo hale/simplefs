@@ -92,10 +92,11 @@ void format ( )
 
   diskblock_t* block_0 = &block;
 
+  /*strcpy( block.data, "This is some text." );*/
+
 
   writeblock(block_0, 0);
 
-  /*printBlock(0);*/
 
   /* prepare FAT table
    * write FAT blocks to virtual disk

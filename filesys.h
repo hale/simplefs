@@ -103,6 +103,7 @@ typedef struct filedescriptor {
 void format() ;
 void writedisk ( const char * filename ) ;
 void printBlock() ;
+void writeblock(diskblock_t * block, int block_address) ;
 
 
 #endif
