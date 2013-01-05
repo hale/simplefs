@@ -23,11 +23,11 @@ int main(int argc, char **argv) {
 
   format();
 
-  diskblock_t block;
-  strcpy( block.data, "CS3008 Operating Systems Assessment 2012" );
-  writeblock(&block, 0);
+  //diskblock_t block;
+  //strcpy( block.data, "CS3008 Operating Systems Assessment 2012" );
+  //writeblock(&block, 0);
 
-  printBlock(0);
+  /*printBlock(0);*/
 
   writedisk( "virtualdisk9_11" );
 

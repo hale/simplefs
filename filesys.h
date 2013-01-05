@@ -37,8 +37,6 @@ typedef short fatentry_t ;
 
 // a FAT block is a list of 16-bit entries that form a chain of disk addresses
 
-//const int   fatentrycount = (blocksize / sizeof(fatentry_t)) ;
-
 typedef fatentry_t fatblock_t [ FATENTRYCOUNT ] ;
 
 

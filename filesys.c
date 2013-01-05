@@ -25,6 +25,7 @@ void writedisk ( const char * filename )
 {
   printf ( "writedisk> virtualdisk[0] = %s\n", virtualDisk[0].data ) ;
   FILE * dest = fopen( filename, "w" ) ;
+  // FIXME: always false
   if ( fwrite ( virtualDisk, sizeof(virtualDisk), 1, dest ) < 0 )
     fprintf ( stderr, "write virtual disk to disk failed\n" ) ;
   //write( dest, virtualDisk, sizeof(virtualDisk) ) ;
@@ -35,6 +36,7 @@ void writedisk ( const char * filename )
 void readdisk ( const char * filename )
 {
   FILE * dest = fopen( filename, "r" ) ;
+  // FIXME: always false
   if ( fread ( virtualDisk, sizeof(virtualDisk), 1, dest ) < 0 )
     fprintf ( stderr, "write virtual disk to disk failed\n" ) ;
   //write( dest, virtualDisk, sizeof(virtualDisk) ) ;
@@ -70,6 +72,31 @@ void writeblock ( diskblock_t * block, int block_address )
  *              - each block can hold (BLOCKSIZE / sizeof(fatentry_t)) fat entries
  */
 
+void clearblock ( diskblock_t * block ) {
+  for (int i = 0; i < BLOCKSIZE; i++) {
+    (*block).data[i] = '\0';
+  }
+}
+
+void writefat( ) {
+  // write the first FAT block
+  diskblock_t block_1;
+  clearblock(&block_1);
+  for ( int i = 0; i < FATENTRYCOUNT; i++) {
+    block_1.fat[i] = FAT[i];
+  }
+  writeblock(&block_1, 1);
+
+  // write second half of FAT in block 2
+  diskblock_t block_2;
+  clearblock(&block_2);
+  for ( int i = FATENTRYCOUNT; i < FATENTRYCOUNT * 2; i++) {
+    block_2.fat[i-512] = FAT[i];
+  }
+  writeblock(&block_2, 2);
+}
+
+
 /* implement format()
 */
 void format ( )
@@ -84,31 +111,40 @@ void format ( )
    * use strcpy() to copy some text to it for test purposes
    * write block 0 to virtual disk
    */
-
-
-  for (int i = 0; i < BLOCKSIZE; i++) {
-    block.data[i] = '\0';
-  }
-
-  diskblock_t* block_0 = &block;
-
-  /*strcpy( block.data, "This is some text." );*/
-
-
-  writeblock(block_0, 0);
-
+  diskblock_t block_0;
+  clearblock(&block_0);
+  strcpy((char *) block_0.data, "CS3008 Operating Systems Assessment 2012" );
+  writeblock(&block_0, 0);
 
   /* prepare FAT table
    * write FAT blocks to virtual disk
    */
+  for ( int i = 0; i < BLOCKSIZE; i++) {
+    FAT[i] = UNUSED;
+  }
+  FAT[0] = ENDOFCHAIN;  // start block
+  FAT[1] = 2;           // first FAT block
+  FAT[2] = ENDOFCHAIN;  // last FAT block
+  FAT[3] = ENDOFCHAIN;  // root directory
+  writefat();
 
   /* prepare root directory
    * write root directory block to virtual disk
    */
+  diskblock_t block_3;
+  clearblock(&block_3);
+  for ( int i = 0; i < BLOCKSIZE; i++) {
+    block_3.data[i] = UNUSED;
+  }
+  block_3.dir.isdir = 1;
+  block_3.dir.nextEntry = 0;
+  writeblock(&block_3, 3);
 
-  // printf("\n\nTEST\n\n");
+
+
 
 }
+
 
 
 /* use this for testing

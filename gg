@@ -1,2 +1,2 @@
 #/bin/sh
-clang shell.c filesys.c && ./a.out
+clang shell.c filesys.c && ./a.out && hexdump -C virtualdisk9_11
